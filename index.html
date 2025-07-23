@@ -1,0 +1,771 @@
+   <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>COSTUM - Bienvenida + Tour + Registro + Login</title>
+  <style>
+   .hidden {
+      display: none !important;
+    } 
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial Black', sans-serif; }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow-y: auto;
+      background: white;
+      scroll-behavior: smooth;
+    }
+
+    /* Splash y bienvenida: fijos y pantalla completa */
+    .splash, .bienvenida {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      transition: opacity 1s ease;
+      z-index: 100;
+    }
+
+    .logo-c {
+      font-size: 100px;
+      font-weight: bold;
+      background-color: black;
+      color: white;
+      border-radius: 20px;
+      padding: 20px 30px;
+    }
+
+    .bienvenida {
+      flex-direction: column;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .logo-costum {
+      font-size: 40px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .logo-costum span.c-icon {
+      background-color: black;
+      color: white;
+      font-size: 40px;
+      padding: 10px 15px;
+      border-radius: 12px;
+    }
+
+    .logo-costum span.name {
+      font-size: 40px;
+      font-weight: bold;
+      color: black;
+    }
+
+    .frase {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #444;
+    }
+
+    .entrar-btn {
+      margin-top: 30px;
+      padding: 10px 25px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Contenedor tour */
+    .tour-container {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background: black; /* Fondo negro porque video lo cubre */
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      border-bottom: 5px solid #0a0;
+      overflow: hidden;
+      scroll-snap-align: start;
+    }
+
+    /* Video de fondo fijo para tour */
+    #tourVideo {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      pointer-events: none;
+      filter: brightness(0.4);
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slide {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      animation: fadeIn 1s ease;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      background: white;
+      color: black;
+      font-size: 35px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    .text {
+      font-size: 15px;
+      color: #ccc;
+    }
+
+    .btn {
+      margin-top: 25px;
+      padding: 10px 25px;
+      background: white;
+      color: black;
+      border: none;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      z-index: 4;
+    }
+
+    .btn-bajar-registro {
+      margin-top: 20px;
+      padding: 10px 25px;
+      background: #00C851;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Registro con fondo verde claro */
+    .registro-container {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background: #a9d18e; /* verde claro */
+      color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      scroll-snap-align: start;
+    }
+
+    /* Formulario registro blanco */
+    .registro-formulario {
+      background: white;
+      padding: 30px 20px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      color: black;
+      box-shadow: 0 0 20px #679e3faa;
+    }
+
+    .registro-formulario h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .registro-formulario p.subtexto {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    .registro-formulario input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: 1px solid #679e3f;
+      font-size: 14px;
+      background: #f0f8dc;
+      color: black;
+    }
+
+    .input-container {
+      position: relative;
+    }
+
+    .ver-icono {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 14px;
+      color: #679e3f;
+      user-select: none;
+    }
+
+    .registro-formulario .info {
+      font-size: 12px;
+      color: #567a2b;
+      margin-top: 10px;
+    }
+
+    .registro-formulario .separador {
+      margin: 20px 0 10px;
+      font-size: 12px;
+      color: #679e3f;
+    }
+
+    .registro-formulario .social-btn {
+      width: 100%;
+      margin: 5px 0;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .google { background: #db4437; color: white; }
+    .facebook { background: #3b5998; color: white; }
+    .apple { background: black; color: white; }
+
+    .crear-cuenta-btn {
+      margin-top: 20px;
+      background: #679e3f;
+      color: white;
+      font-size: 16px;
+      padding: 12px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .login-link {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #567a2b;
+    }
+    .login-link a {
+      color: #367a17;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Sección login, inicialmente oculta */
+    .login-container {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background: #a9d18e;
+      color: black;
+      display: none; /* Oculto por defecto */
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      scroll-snap-align: start;
+    }
+
+    .login-container.active {
+      display: flex;
+    }
+
+    .login-formulario {
+      background: white;
+      padding: 30px 20px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      color: black;
+      box-shadow: 0 0 20px #679e3faa;
+    }
+
+    .login-formulario h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .login-formulario input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: 1px solid #679e3f;
+      font-size: 14px;
+      background: #f0f8dc;
+      color: black;
+    }
+
+    .login-formulario .social-btn {
+      margin-top: 20px;
+      font-size: 16px;
+      padding: 12px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .google { background: #db4437; color: white; }
+    .facebook { background: #3b5998; color: white; }
+    .apple { background: black; color: white; }
+
+    .iniciar-sesion-btn {
+  margin-top: 20px;
+  background: #679e3f;
+  color: white;
+  font-size: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  width: 100%;
+}
+
+
+
+    /* Ocultar tour cuando scroll al registro o login */
+    .hidden {
+      display: none !important;
+    }
+  
+
+
+  </style>
+</head>
+<body>
+
+   <!-- Splash -->
+<div class="splash" id="splash">
+  <div class="logo-c">C</div>
+</div>
+
+<!-- Bienvenida -->
+<div class="bienvenida" id="bienvenida">
+  <h2>¡Bienvenidos a:</h2>
+  <div class="logo-costum">
+    <span class="c-icon">C</span>
+    <span class="name">COSTUM</span>
+  </div>
+  <p class="frase">"La única tienda y comunidad global que necesitas"</p>
+  <button class="entrar-btn" id="entrarBtn">Entrar &gt;&gt;&gt;</button>
+</div>
+
+<!-- Tour -->
+<section class="tour-container" id="tour">
+  <video id="tourVideo" autoplay muted loop playsinline>
+    <source src="costumvideo.mp4" type="video/mp4" />
+    Tu navegador no soporta el video.
+  </video>
+  <div class="container">
+    <div class="slide active">
+      <div class="logo">C</div>
+      <div class="title">¡Bienvenido al futuro del comercio!</div>
+      <div class="text">Conéctate, vende y construye tu imperio digital.</div>
+      <button class="btn" onclick="nextSlide()">Siguiente &gt;</button>
+    </div>
+    <div class="slide">
+      <div class="logo">C</div>
+      <div class="title">¡Vende sin límites!</div>
+      <div class="text">Desde productos físicos hasta digitales. COSTUM es tu tienda, catálogo y oficina.</div>
+      <button class="btn" onclick="nextSlide()">Siguiente &gt;</button>
+    </div>
+    <div class="slide">
+      <div class="logo">C</div>
+      <div class="title">¡Con Inteligencia Artificial!</div>
+      <div class="text">La IA mejora tus decisiones y ventas cada día.</div>
+      <button class="btn" onclick="nextSlide()">Siguiente &gt;</button>
+    </div>
+    <div class="slide">
+      <div class="logo">C</div>
+      <div class="title">¡Comunidad global!</div>
+      <div class="text">Colabora, aprende y crece desde cualquier país.</div>
+      <button class="btn-bajar-registro" onclick="irARegistro()">¡Comenzar ahora!</button>
+    </div>
+  </div>
+</section>
+
+<!-- Registro -->
+<section class="registro-container" id="registro">
+  <div class="registro-formulario">
+    <h1>¡CREA TU CUENTA COSTUM!</h1>
+    <p class="subtexto">Únete al movimiento global del comercio digital.</p>
+    <p class="subtexto">Empieza a vender, comprar y conectar.</p>
+    <p class="subtexto">¡Crea tu cuenta y empieza hoy!</p>
+
+    <input id="nombreRegistro" type="text" placeholder="Nombre completo" />
+    <input id="emailRegistro" type="email" placeholder="Correo electrónico" />
+
+    <div class="input-container">
+      <input type="password" id="pass1" placeholder="Crea tu contraseña" />
+      <span class="ver-icono" onclick="togglePassword('pass1')">👁️</span>
+    </div>
+
+    <div class="input-container">
+      <input type="password" id="pass2" placeholder="Repite tu contraseña" />
+      <span class="ver-icono" onclick="togglePassword('pass2')">👁️</span>
+    </div>
+
+    <p class="info">Tu contraseña debe tener al menos 12 caracteres.</p>
+
+    <p class="separador">----- O crea tu cuenta con -----</p>
+    <button class="social-btn google" onclick="loginGoogle()">Google</button>
+    <button class="social-btn facebook" onclick="loginFacebook()">Facebook</button>
+    <button class="social-btn apple" onclick="loginApple()">Apple</button>
+
+    <button id="crearCuentaBtn" class="crear-cuenta-btn" onclick="handleRegister()">CREAR CUENTA COSTUM</button>
+
+    <p class="subtexto">Tu cuenta será protegida con los más altos estándares de seguridad digital.</p>
+
+    <p class="login-link">¿Ya tienes una cuenta? <a href="#" onclick="mostrarLogin(event)">Iniciar sesión</a></p>
+  </div>
+</section>
+
+
+
+<!-- Login -->
+<section class="login-container" id="login">
+  <div class="login-formulario">
+    <h1>¡INICIA SESIÓN EN TU CUENTA!</h1>
+    <p class="subtexto">Bienvenido de nuevo a Costum, conécta con tu negocio y el mundo desde donde estés.</p>
+
+    <input id="emailLogin" type="email" placeholder="Correo electrónico" />
+    <div class="input-container">
+      <input type="password" id="passLogin" placeholder="Contraseña" />
+      <span class="ver-icono" onclick="togglePassword('passLogin')">👁️</span>
+    </div>
+
+    <button id="iniciarSesionBtn" class="iniciar-sesion-btn" onclick="handleLogin()">INICIAR SESIÓN</button>
+
+    <!-- Enlace para recuperar contraseña -->
+    <p class="login-link" style="margin-top: 10px;">
+      <a href="#">¿Olvidaste tu contraseña?</a>
+    </p>
+
+    <p class="login-link">¿No tienes cuenta? <a href="#" onclick="mostrarRegistro(event)">Crear cuenta</a></p>
+
+    <p class="separador">----- O inicia sesión con -----</p>
+    <button class="social-btn google" onclick="loginGoogle()">Google</button>
+    <button class="social-btn facebook" onclick="loginFacebook()">Facebook</button>
+    <button class="social-btn apple" onclick="loginApple()">Apple</button>
+
+    <p class="subtexto">Tu cuenta está protegida con los más altos estándares de seguridad digital.</p>
+  </div>
+</section>
+<section id="home" class="hidden">
+
+
+<!-- Home -->
+<section id="home" class="hidden">
+  <h1>Bienvenido a Home</h1>
+  <p>Esta es la pantalla principal después de iniciar sesión o registrarte.</p>
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+</section>
+
+</section>
+ <!-- Firebase App (core SDK) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
+<!-- Firebase Analytics (opcional) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics-compat.js"></script>
+
+
+
+  <script>
+
+    // Configuración Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAUmoN-7nIaYSRFAq2pN3J_AyWLfU1iuYI",
+    authDomain: "costum-e7c55.firebaseapp.com",
+    projectId: "costum-e7c55",
+    storageBucket: "costum-e7c55.appspot.com",
+    messagingSenderId: "323021509339",
+    appId: "1:323021509339:web:b20c90983856b002dd32fe",
+    measurementId: "G-TTF8D0FVLS"
+  };
+  firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+
+  // Variables de elementos
+  const splash = document.getElementById("splash");
+  const bienvenida = document.getElementById("bienvenida");
+  const tour = document.getElementById("tour");
+  const registro = document.getElementById("registro");
+  const login = document.getElementById("login");
+  const slides = document.querySelectorAll('.slide');
+  let index = 0;
+
+  // Bloquear y permitir scroll
+  function bloquearScroll() {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+  }
+
+  function permitirScroll() {
+    document.body.style.overflow = 'auto';
+    document.documentElement.style.overflow = 'auto';
+  }
+
+  // Mostrar bienvenida después de 3 segundos
+  setTimeout(() => {
+    splash.style.opacity = "0";
+    splash.style.pointerEvents = "none";
+    bienvenida.style.opacity = "1";
+    bienvenida.style.pointerEvents = "auto";
+  }, 3000);
+
+  // Al hacer clic en "Entrar", mostrar tour y bloquear scroll
+  document.getElementById("entrarBtn").addEventListener("click", () => {
+    bienvenida.style.opacity = "0";
+    bienvenida.style.pointerEvents = "none";
+
+    const video = document.getElementById("tourVideo");
+    if (video) {
+      video.play().catch((err) => {
+        console.warn("El navegador bloqueó el autoplay:", err);
+      });
+    }
+
+    bloquearScroll();
+    tour.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Pasar al siguiente slide del tour
+  function nextSlide() {
+    slides[index].classList.remove('active');
+    index++;
+    if (index >= slides.length) index = slides.length - 1;
+    slides[index].classList.add('active');
+  }
+
+  // Ir a registro desde el tour y permitir scroll
+  function irARegistro() {
+    permitirScroll();
+    tour.classList.add('hidden');
+    registro.scrollIntoView({ behavior: 'smooth' });
+    login.classList.remove('active');
+  }
+
+  // Mostrar login y permitir scroll
+  function mostrarLogin(event) {
+    event.preventDefault();
+    permitirScroll();
+    login.classList.add('active');
+    login.classList.remove('hidden');
+    registro.classList.remove("active");
+    registro.classList.add("hidden");
+    tour.classList.add('hidden');
+    login.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Mostrar registro y permitir scroll
+  function mostrarRegistro(event) {
+    event.preventDefault();
+    permitirScroll();
+    registro.classList.remove('hidden');
+    registro.classList.add('active');
+    login.classList.remove('active');
+    login.classList.add("hidden");
+    tour.classList.add('hidden');
+    registro.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Mostrar u ocultar contraseña
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+  }
+
+  // Crear cuenta con email y contraseña
+  function crearCuenta(email, password) {
+    return auth.createUserWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        alert("Cuenta creada: " + userCredential.user.email);
+        window.location.href = "home.html";
+    
+
+
+ 
+      })
+      .catch(error => alert("Error: " + error.message));
+  }
+
+  // Iniciar sesión con email y contraseña
+  function iniciarSesion(email, password) {
+    return auth.signInWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        alert("Bienvenido: " + userCredential.user.email);
+        window.location.href = "home.html";
+
+      })
+      .catch(error => alert("Error: " + error.message));
+  }
+
+  // Manejar registro desde formulario
+  function handleRegister() {
+    const nombre = document.getElementById('nombreRegistro').value;
+    const email = document.getElementById('emailRegistro').value;
+    const pass1 = document.getElementById("pass1").value;
+    const pass2 = document.getElementById("pass2").value;
+
+    if (!nombre || !email || !pass1 || !pass2) {
+      alert("Por favor, completa todos los campos.");
+      return;
+    }
+
+    if (pass1 !== pass2) {
+      alert("Las contraseñas no coinciden.");
+      return;
+    }
+
+    if (pass1.length < 12) {
+      alert("La contraseña debe tener al menos 12 caracteres.");
+      return;
+    }
+
+    crearCuenta(email, pass1);
+    window.location.href = "home.html";
+
+    
+
+  }
+
+  // Manejar inicio de sesión desde formulario
+  function handleLogin() {
+    const email = document.getElementById('emailLogin').value;
+    const password = document.getElementById('passLogin').value;
+
+    if (!email || !password) {
+      alert("Por favor, completa todos los campos.");
+      return;
+    }
+
+    iniciarSesion(email, password);
+    window.location.href = "home.html";
+
+  
+
+  }
+
+  // Cerrar sesión
+  function cerrarSesion() {
+    auth.signOut().then(() => {
+      alert("Has cerrado sesión");
+      document.getElementById("home").classList.add("hidden");
+      document.getElementById("bienvenida").style.opacity = "1";
+      document.getElementById("bienvenida").style.pointerEvents = "auto";
+    }).catch((error) => {
+      alert("Error al cerrar sesión: " + error.message);
+    });
+  }
+
+  // Mostrar home y ocultar otras secciones
+  function mostrarHome() {
+    ["registro", "login", "tour"].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.classList.add("hidden");
+    });
+
+    bienvenida.style.opacity = "0";
+    bienvenida.style.pointerEvents = "none";
+
+    const home = document.getElementById("home");
+    if(home) home.classList.remove("hidden");
+
+  }
+
+  // Login con Google
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(result => {
+        alert("Login Google exitoso: " + result.user.email);
+         window.location.href = "home.html";
+      })
+      .catch(error => alert("Error Google: " + error.message));
+  }
+
+  // Login con Facebook
+  function loginFacebook() {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(result => {
+        alert("Login Facebook exitoso: " + result.user.email);
+         window.location.href = "home.html";
+
+      })
+      .catch(error => alert("Error Facebook: " + error.message));
+  }
+
+  // Login con Apple (requiere configuración adicional)
+  function loginApple() {
+    const provider = new firebase.auth.OAuthProvider('apple.com');
+    auth.signInWithPopup(provider)
+      .then(result => {
+        alert("Login Apple exitoso: " + result.user.email);
+         window.location.href = "home.html";
+
+      })
+      .catch(error => alert("Error Apple: " + error.message));
+  }
+  
+  
+   </script> 
+
+</body>
+</html>
+  
